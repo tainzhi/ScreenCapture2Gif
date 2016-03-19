@@ -2,6 +2,8 @@
     <string name="app_name">ScreenCapture2Gif</string>
     <string name="title_activity_settings">Settings</string>
 
+    <string name="btn_text_start">Start</string>
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
