@@ -44,7 +44,7 @@ public class ScreenCaptureService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent,, int flags, int startId) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         Message msg = mServiceHandler.obtainMessage();
         msg.arg1 = MSG_START_CAPTURE;
         mServiceHandler.sendMessage(msg);
