@@ -1,12 +1,15 @@
 package com.muqing.android.screencapture2gif;
 
 import android.content.Context;
+import android.content.Intent;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.muqing.android.screencapture2gif.service.ScreenCaptureService;
 import com.muqing.android.screencapture2gif.util.MyConstants;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startService(MainActivity.this, )
+                Log.v(TAG, "onClick");
+                mContext.startService(new Intent(MainActivity.this,ScreenCaptureService.class));
             }
         });
     }
