@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.muqing.android.screencapture2gif.helper.CaptureHelper;
 import com.muqing.android.screencapture2gif.service.ScreenCaptureService;
 import com.muqing.android.screencapture2gif.util.MyConstants;
 
@@ -30,11 +31,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.v(TAG, "onClick");
-                mContext.startService(new Intent(MainActivity.this,ScreenCaptureService.class));
+//                mContext.startService(new Intent(MainActivity.this,ScreenCaptureService.class));
+                CaptureHelper.fireCaptureIntent(MainActivity.this);
+
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (!CaptureHelper.handleActivityResult(this, requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+
+        // back to home screen
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
+    }
 
     @Override
     protected void onDestroy() {

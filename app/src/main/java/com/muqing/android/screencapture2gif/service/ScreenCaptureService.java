@@ -1,17 +1,27 @@
 package com.muqing.android.screencapture2gif.service;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.VirtualDisplay;
 import android.media.MediaRecorder;
+import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.*;
 import android.os.Process;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 
+import com.muqing.android.screencapture2gif.MainActivity;
 import com.muqing.android.screencapture2gif.notification.ScreenRecordNotification;
 import com.muqing.android.screencapture2gif.util.MyConstants;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ScreenCaptureService extends Service {
 
@@ -23,10 +33,18 @@ public class ScreenCaptureService extends Service {
     private int mScreenDensity;
     private MediaRecorder mMediaRecorder;
     private MediaProjectionManager mMediaProjectionManager;
+    private MediaProjection mMediaProjection;
+    private VirtualDisplay mVirtualDisplay;
 
     private static final int MSG_START_CAPTURE = 1;
     private static final int MSG_STOP_SERVICE = 2;
 
+    public static Intent newIntent(Context context, int resultCode, Intent data) {
+        Intent intent = new Intent(context, ScreenCaptureService.class);
+        intent.putExtra("result-code", resultCode);
+        intent.putExtra("data", data);
+        return intent;
+    }
 
     private final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
@@ -40,9 +58,11 @@ public class ScreenCaptureService extends Service {
                     Log.v(TAG, "handleMessage");
                     ScreenRecordNotification screenRecordNotification = new ScreenRecordNotification(mContext);
                     screenRecordNotification.startNotificate();
+                    initScreenRecorder();
                     break;
                 case MSG_STOP_SERVICE:
                     Log.v(TAG, "stop service");
+                    stopCapture();
                     stopSelf();
                 default:
                     break;
@@ -58,8 +78,11 @@ public class ScreenCaptureService extends Service {
         mContext = getApplicationContext();
 
         DisplayMetrics metrics = new DisplayMetrics();
-        getWindowmanager().getDefaultDisplay().getMetrics(metrics);
+        WindowManager windowManager = (WindowManager)mContext.getSystemService(mContext.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
         mScreenDensity = metrics.densityDpi;
+        mMediaRecorder = new MediaRecorder();
+        mMediaProjectionManager = (MediaProjectionManager)getSystemService(mContext.MEDIA_PROJECTION_SERVICE);
 
         HandlerThread thread = new HandlerThread("ScreenCaptureService handler",
                 Process.THREAD_PRIORITY_BACKGROUND);
@@ -78,10 +101,16 @@ public class ScreenCaptureService extends Service {
             Message msg = mServiceHandler.obtainMessage();
             msg.what = MSG_STOP_SERVICE;
             mServiceHandler.sendMessage(msg);
+
+
         } else {
             Message msg = mServiceHandler.obtainMessage();
             msg.what = MSG_START_CAPTURE;
             mServiceHandler.sendMessage(msg);
+
+            int resultCode = intent.getExtras().getInt("result-code");
+            Intent data = intent.getParcelableExtra("data");
+            mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, data);
         }
         return START_NOT_STICKY;
     }
@@ -96,4 +125,51 @@ public class ScreenCaptureService extends Service {
         Log.v(TAG, "onDestroy");
         super.onDestroy();
     }
+
+    private void initScreenRecorder() {
+        try {
+            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
+            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            mMediaRecorder.setOutputFile(Environment
+                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/video.mp4");
+            mMediaRecorder.setVideoSize(270, 480);
+            mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            mMediaRecorder.setAudioEncodingBitRate(5121000);
+            mMediaRecorder.setVideoFrameRate(30);
+            // TODO: 2016/3/24 mMediaRecorder.setOritation()
+            mMediaRecorder.prepare();
+            Log.v(TAG, "mMediaProjection=null" + ((mMediaProjection == null)? "true" : "false"));
+            mVirtualDisplay = mMediaProjection.createVirtualDisplay("Capture Screen",
+                    270,
+                    480,
+                    mScreenDensity,
+                    DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                    mMediaRecorder.getSurface(), null, null);
+
+            mMediaRecorder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "" + e);
+            // FIXME: 2016/3/24
+        }
+    }
+
+
+    private void stopCapture() {
+        mMediaRecorder.stop();
+        mMediaRecorder.reset();
+        Log.v(TAG, "stop recording");
+        if (mVirtualDisplay == null) {
+            return;
+        }
+        mVirtualDisplay.release();
+        if (mMediaProjection != null) {
+            mMediaProjection.stop();
+            mMediaProjection = null;
+        }
+        //mContext.startActivity(new Intent(ScreenCaptureService.this, MainActivity.class));
+    }
+
 }
