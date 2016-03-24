@@ -17,6 +17,9 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.muqing.android.screencapture2gif.MainActivity;
+import com.muqing.android.screencapture2gif.helper.gifhelper.FFmpegCommandBuilder;
+import com.muqing.android.screencapture2gif.helper.gifhelper.FFmpegNativeHelper;
+import com.muqing.android.screencapture2gif.helper.gifhelper.GifMerger;
 import com.muqing.android.screencapture2gif.notification.ScreenRecordNotification;
 import com.muqing.android.screencapture2gif.util.MyConstants;
 
@@ -169,7 +172,16 @@ public class ScreenCaptureService extends Service {
             mMediaProjection.stop();
             mMediaProjection = null;
         }
+
+        videoToGif();
         //mContext.startActivity(new Intent(ScreenCaptureService.this, MainActivity.class));
     }
 
+    private void videoToGif() {
+
+        GifMerger.generateGifProduct("/storage/sdcard0/Download/video.gif"
+                , "/storage/sdcard0/Download/video.mp4", 0, 20);
+    }
+
+    private static FFmpegNativeHelper mFFmpegNativeHelper = new FFmpegNativeHelper();
 }
