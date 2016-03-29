@@ -16,7 +16,7 @@ import com.muqing.android.screencapture2gif.util.MyConstants;
  */
 public class CaptureHelper {
     private static final String TAG = MyConstants.TAG_PREFIX + "CaptureHelper";
-    private static final int CREATE_SCREEN_CAPTUE = 9161; /* just a arbitrary number */
+    private static final int EXTRA_CRATE_SCREEN_CAPTURE = 9161; /* just a arbitrary number */
 
     public CaptureHelper() {
         Log.v(TAG, "CaptureHelper, creator");
@@ -27,14 +27,15 @@ public class CaptureHelper {
         MediaProjectionManager manager =
                 (MediaProjectionManager)activity.getSystemService(activity.MEDIA_PROJECTION_SERVICE);
         Intent intent = manager.createScreenCaptureIntent();
-        activity.startActivityForResult(intent, CREATE_SCREEN_CAPTUE);
+        activity.startActivityForResult(intent, EXTRA_CRATE_SCREEN_CAPTURE);
     }
 
     public static boolean handleActivityResult(Activity activity,
                                      int requestCode,
                                      int resultCode,
                                      Intent data) {
-        if (requestCode != CREATE_SCREEN_CAPTUE) {
+        Log.v(TAG, "handleActivityResult");
+        if (requestCode != EXTRA_CRATE_SCREEN_CAPTURE) {
             return false;
         }
         if (resultCode == activity.RESULT_OK) {

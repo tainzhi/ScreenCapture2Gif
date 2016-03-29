@@ -42,10 +42,13 @@ public class ScreenCaptureService extends Service {
     private static final int MSG_START_CAPTURE = 1;
     private static final int MSG_STOP_SERVICE = 2;
 
+    private static String EXTRA_RESULT_CODE = "result-code";
+    private static String EXTRA_DATA = "data";
+
     public static Intent newIntent(Context context, int resultCode, Intent data) {
         Intent intent = new Intent(context, ScreenCaptureService.class);
-        intent.putExtra("result-code", resultCode);
-        intent.putExtra("data", data);
+        intent.putExtra(EXTRA_RESULT_CODE, resultCode);
+        intent.putExtra(EXTRA_DATA, data);
         return intent;
     }
 
@@ -111,8 +114,8 @@ public class ScreenCaptureService extends Service {
             msg.what = MSG_START_CAPTURE;
             mServiceHandler.sendMessage(msg);
 
-            int resultCode = intent.getExtras().getInt("result-code");
-            Intent data = intent.getParcelableExtra("data");
+            int resultCode = intent.getExtras().getInt(EXTRA_RESULT_CODE);
+            Intent data = intent.getParcelableExtra(EXTRA_DATA);
             mMediaProjection = mMediaProjectionManager.getMediaProjection(resultCode, data);
         }
         return START_NOT_STICKY;

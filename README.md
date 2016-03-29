@@ -1,10 +1,10 @@
 #ScreenCapture2Gif#
 
 
-
 ##Notes
 
 ###Video to Gif###
+
 https://github.com/quackware/GIFDroid
 
 ##Todo##
