@@ -6,6 +6,10 @@
 ### 至少android5.0###
 因为使用了在android5.0引入的接口`MediaProjection`
 
+### show touch feedback###
+http://stackoverflow.com/questions/14374169/android-implement-show-touches-programatically
+https://github.com/googlesamples/android-ScreenCapture
+
 ### 目前遇到的问题###
 **怎么用ndk编译ffmpeg到arm64-v8a**
 ### 参考###
