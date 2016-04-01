@@ -51,7 +51,7 @@ include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := ffmpeg_jni
-LOCAL_SRC_FILES := ffmpeg_jni.h ffmpeg_jni.c logjam.h
+LOCAL_SRC_FILES := ffmpeg_jni.h ffmpeg_jni.c logjam.h ffmpeg.h ffmpeg.c config.h cmdutils.c cmdutils.h ffmpeg_filter.c ffmpeg_opt.c
 LOCAL_LDLIBS := -llog -ljnigraphics -lz -landroid
 # LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
