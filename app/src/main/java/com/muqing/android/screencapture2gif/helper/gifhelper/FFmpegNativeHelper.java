@@ -14,7 +14,7 @@ public class FFmpegNativeHelper {
         System.loadLibrary("swscale");
         System.loadLibrary("avfilter");
         System.loadLibrary("avdevice");
-        System.loadLibrary("ffmpeg_jni");
+        System.loadLibrary("ffmpegjni");
     }
 
     // success 0, error 1

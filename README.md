@@ -13,8 +13,6 @@ https://github.com/googlesamples/android-ScreenCapture
 ### 目前遇到的问题###
 **怎么用ndk编译ffmpeg到arm64-v8a**
 ### 参考###
-http://www.cnblogs.com/hibraincol/archive/2011/05/30/2063847.html
-https://trac.ffmpeg.org/wiki/CompilationGuide/Android
 https://www.google.com.tw/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=androidstudio+ndk
 http://developer.android.com/intl/zh-cn/ndk/guides/application_mk.html
 https://github.com/dxjia/GifAssistant
