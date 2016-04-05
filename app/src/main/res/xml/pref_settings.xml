@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/pref_title_general_settings"
+        android:key="pref_key_general_settings">
+
+        <SwitchPreference
+            android:title="@string/pref_title_show_touch_feedback"
+            android:defaultValue="true"
+            android:checked="true"
+            android:key="pref_show_touch_feedback" />
+
+
+        <EditTextPreference
+            android:title="@string/pref_title_save_directory"
+            android:key="pref_key_save_directory"
+            android:summary="@string/pref_summary_save_directory"
+            android:dialogTitle="@string/pref_dialog_title_save_directory"
+            android:defaultValue="@string/pref_default_value_save_directory"/>
+
+        <EditTextPreference
+            android:title="@string/pref_title_gif_name"
+            android:key="pref_key_gif_name"
+            android:summary="@string/pref_summary_gif_name"
+            android:dialogTitle="@string/pref_dialog_title_gif_name"
+            android:defaultValue="@string/pref_default_value_gif_name"/>
+
+        <ListPreference
+            android:title="@string/pref_title_gif_size"
+            android:key="pref_key_gif_size"
+            android:dialogTitle="@string/pref_dialog_title_gif_size"
+            android:entries="@array/pref_entries_gif_size"
+            android:entryValues="@array/pref_entry_values_gif_size"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_advanced_settings"
+        android:key="pref_key_advanced_settings">
+
+    </PreferenceCategory>
+</PreferenceScreen>
