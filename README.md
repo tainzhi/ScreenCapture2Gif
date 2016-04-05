@@ -1,6 +1,6 @@
 #ScreenCapture2Gif#
 - 录屏(已完成)
-- 把录屏转为gif(因为要使用ffmpeg, 但是ffmpeg编译的过程中遇到了麻烦, 暂时搁置)
+- 把录屏转为gif
 
 ##Notes
 ### 至少android5.0###
@@ -10,19 +10,11 @@
 http://stackoverflow.com/questions/14374169/android-implement-show-touches-programatically
 https://github.com/googlesamples/android-ScreenCapture
 
-### 目前遇到的问题###
-**怎么用ndk编译ffmpeg到arm64-v8a**
-### 参考###
-https://www.google.com.tw/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=androidstudio+ndk
-http://developer.android.com/intl/zh-cn/ndk/guides/application_mk.html
-https://github.com/dxjia/GifAssistant
-https://github.com/Kernald/ffmpeg-android
-http://enoent.fr/blog/2014/06/20/compile-ffmpeg-for-android/
-https://github.com/JakeWharton/Telecine
+### transplant ffmpeg to android
+https://github.com/tainzhi/ffmpeg-for-android-shared-library
 
-###Video to Gif###
-
-https://github.com/quackware/GIFDroid
+### use ffmpeg jni to get gif from video
+https://github.com/tainzhi/ffmpeg-jni-example
 
 ##Todo##
 - [ ] Settings选项: name, resolution 480x270, delay 100
@@ -31,3 +23,7 @@ https://github.com/quackware/GIFDroid
 - [ ] 判断当前的屏幕分辨率, 然后缩放
 - [ ] 绘制AppIcon(Android图标+GIF)
 - [ ] Settings: from Video or from pictures
+
+## References
+[GifAssistant](https://github.com/dxjia/GifAssistant)
+[Record Screen: Telecine](https://github.com/JakeWharton/Telecine)
