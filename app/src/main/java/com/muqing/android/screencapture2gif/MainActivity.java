@@ -2,6 +2,7 @@ package com.muqing.android.screencapture2gif;
 
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         startBtn = (Button) findViewById(R.id.button);
-        Settings.System.putInt(mContext.getContentResolver(), "show_touches", 1);
+
+        setDefaultPreference();
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setDefaultPreference() {
+        Log.v(TAG, "setDefaultPreference");
+        PreferenceManager.setDefaultValues(mContext, R.xml.pref_settings, false);
     }
 
     @Override
@@ -57,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Settings.System.putInt(mContext.getContentResolver(), "show_touches", 0);
         super.onDestroy();
     }
 
