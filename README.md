@@ -18,7 +18,7 @@ https://github.com/tainzhi/ffmpeg-jni-example
 
 ##Todo##
 - [+] 绘制圆底start
-- [ ] Settings选项: name, resolution 480x270, delay 100
+- [+] Settings选项: name, resolution 480x270, delay 100
 - [ ] notification
 - [ ] Martial Design
 - [ ] 判断当前的屏幕分辨率, 然后缩放
