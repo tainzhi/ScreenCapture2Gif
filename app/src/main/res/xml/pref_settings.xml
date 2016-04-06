@@ -29,6 +29,7 @@
             android:title="@string/pref_title_gif_size"
             android:key="pref_key_gif_size"
             android:dialogTitle="@string/pref_dialog_title_gif_size"
+            android:defaultValue="@string/pref_default_value_gif_size"
             android:entries="@array/pref_entries_gif_size"
             android:entryValues="@array/pref_entry_values_gif_size"/>
 
@@ -38,5 +39,28 @@
         android:title="@string/pref_title_advanced_settings"
         android:key="pref_key_advanced_settings">
 
+        <EditTextPreference
+            android:title="@string/pref_title_video_name"
+            android:key="pref_key_video_name"
+            android:summary="@string/pref_summary_video_name"
+            android:dialogTitle="@string/pref_dialog_title_video_name"
+            android:defaultValue="@string/pref_default_value_video_name"/>
+        <ListPreference
+            android:title="@string/pref_title_video_size"
+            android:key="pref_key_video_size"
+            android:dialogTitle="@string/pref_dialog_title_video_size"
+            android:defaultValue="@string/pref_default_value_video_size"
+            android:entries="@array/pref_entries_video_size"
+            android:entryValues="@array/pref_entry_values_video_size"/>
+
+        <ListPreference
+            android:title="@string/pref_title_video_frame_rate"
+            android:key="pref_key_video_frame_rate"
+            android:dialogTitle="@string/pref_dialog_title_video_frame_rate"
+            android:summary="@string/pref_summary_video_frame_rate"
+            android:defaultValue="@string/pref_default_value_video_frame_rate"
+            android:entries="@array/pref_entries_video_frame_rate"
+            android:entryValues="@array/pref_entry_values_video_frame_rate"/>
     </PreferenceCategory>
+
 </PreferenceScreen>
