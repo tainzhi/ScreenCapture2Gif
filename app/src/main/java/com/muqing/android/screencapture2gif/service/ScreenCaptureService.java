@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.media.MediaRecorder;
@@ -11,9 +12,12 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.*;
 import android.os.Process;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.WindowManager;
 
 import com.muqing.android.screencapture2gif.MainActivity;
@@ -22,6 +26,7 @@ import com.muqing.android.screencapture2gif.helper.gifhelper.FFmpegNativeHelper;
 import com.muqing.android.screencapture2gif.helper.gifhelper.GifMerger;
 import com.muqing.android.screencapture2gif.notification.ScreenRecordNotification;
 import com.muqing.android.screencapture2gif.util.MyConstants;
+import com.muqing.android.screencapture2gif.R;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +49,10 @@ public class ScreenCaptureService extends Service {
 
     private static String EXTRA_RESULT_CODE = "result-code";
     private static String EXTRA_DATA = "data";
+
+    private SharedPreferences mSharedPreferences;
+    private int mVideoWidth;
+    private int mVideoHeight;
 
     public static Intent newIntent(Context context, int resultCode, Intent data) {
         Intent intent = new Intent(context, ScreenCaptureService.class);
@@ -83,6 +92,8 @@ public class ScreenCaptureService extends Service {
         Log.v(TAG, "onCreate");
         mContext = getApplicationContext();
 
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
         DisplayMetrics metrics = new DisplayMetrics();
         WindowManager windowManager = (WindowManager)mContext.getSystemService(mContext.WINDOW_SERVICE);
         windowManager.getDefaultDisplay().getMetrics(metrics);
@@ -95,7 +106,6 @@ public class ScreenCaptureService extends Service {
         thread.start();
         mServiceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(mServiceLooper);
-
     }
 
     @Override
@@ -129,19 +139,40 @@ public class ScreenCaptureService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
+
+        Settings.System.putInt(mContext.getContentResolver(), "show_touches", 0);
+
         super.onDestroy();
     }
 
+
+    private void setShowFeedback() {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        boolean showFeedback = mSharedPreferences.getBoolean(getString(R.string.pref_key_show_touch_feedback),
+                true);
+        if (showFeedback) {
+            Settings.System.putInt(mContext.getContentResolver(), "show_touches", 1);
+        } else {
+            Settings.System.putInt(mContext.getContentResolver(), "show_touches", 0);
+        }
+    }
+
     private void initScreenRecorder() {
+
+        String videoPath = getVideoPath();
+        int videoFrameRate = getVideoFrameRate();
+        getWindowWidthHeight();
+        int videoWidth = mVideoWidth;
+        int videoHeight = mVideoHeight;
+
         try {
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-            mMediaRecorder.setVideoFrameRate(30);
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-            mMediaRecorder.setOutputFile(Environment
-                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/video.mp4");
-            mMediaRecorder.setVideoSize(270, 480);
+            mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+            mMediaRecorder.setOutputFile(videoPath);
+            mMediaRecorder.setVideoFrameRate(videoFrameRate);
+            mMediaRecorder.setVideoSize(mVideoWidth, mVideoHeight);
 //            record audio
-//            mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 //            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 //            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 //            mMediaRecorder.setAudioEncodingBitRate(5121000);
@@ -149,8 +180,8 @@ public class ScreenCaptureService extends Service {
             mMediaRecorder.prepare();
             Log.v(TAG, "mMediaProjection=null" + ((mMediaProjection == null)? "true" : "false"));
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("Capture Screen",
-                    270,
-                    480,
+                    mVideoWidth,
+                    mVideoHeight,
                     mScreenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                     mMediaRecorder.getSurface(), null, null);
@@ -162,7 +193,6 @@ public class ScreenCaptureService extends Service {
             // FIXME: 2016/3/24
         }
     }
-
 
     private void stopCapture() {
         mMediaRecorder.stop();
@@ -188,4 +218,45 @@ public class ScreenCaptureService extends Service {
     }
 
     private static FFmpegNativeHelper mFFmpegNativeHelper = new FFmpegNativeHelper();
+
+    private void getWindowWidthHeight() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        ((WindowManager)getSystemService(mContext.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
+        mVideoWidth = metrics.widthPixels;
+        mVideoHeight = metrics.heightPixels;
+    }
+
+    private String getVideoPath() {
+        String parentDirectory = mSharedPreferences.getString(getString(R.string.pref_key_save_directory),
+                getString(R.string.pref_default_value_save_directory));
+        String videoName = mSharedPreferences.getString(getString(R.string.pref_key_video_name),
+                getString(R.string.pref_default_value_video_name));
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                + File.separator
+                + parentDirectory);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        return file.getAbsolutePath() + File.separator + videoName;
+    }
+
+    private int getVideoFrameRate() {
+        String videoFrameRateStr = mSharedPreferences.getString(getString(R.string.pref_key_video_frame_rate),
+                getString(R.string.pref_default_value_video_frame_rate));
+        int videoFrameRate = Integer.parseInt(videoFrameRateStr);
+        return videoFrameRate;
+    }
+
+    private int[] getVideoSize() {
+        String videoSize = mSharedPreferences.getString(getString(R.string.pref_key_gif_size),
+                getString(R.string.pref_default_value_gif_size));
+        if (videoSize.equals("Original")) {
+            return null;
+        } else {
+            int xindex = videoSize.charAt('x');
+            int width = Integer.parseInt(videoSize.substring(0, xindex));
+            int height = Integer.parseInt(videoSize.substring(xindex + 1, videoSize.length()));
+            return new int[]{width, height};
+        }
+    }
 }
