@@ -178,7 +178,6 @@ public class ScreenCaptureService extends Service {
 //            mMediaRecorder.setAudioEncodingBitRate(5121000);
             // TODO: 2016/3/24 mMediaRecorder.setOritation()
             mMediaRecorder.prepare();
-            Log.v(TAG, "mMediaProjection=null" + ((mMediaProjection == null)? "true" : "false"));
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("Capture Screen",
                     mVideoWidth,
                     mVideoHeight,
