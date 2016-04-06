@@ -134,16 +134,17 @@ public class ScreenCaptureService extends Service {
 
     private void initScreenRecorder() {
         try {
-            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
+            mMediaRecorder.setVideoFrameRate(30);
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
             mMediaRecorder.setOutputFile(Environment
                     .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/video.mp4");
             mMediaRecorder.setVideoSize(270, 480);
-            mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mMediaRecorder.setAudioEncodingBitRate(5121000);
-            mMediaRecorder.setVideoFrameRate(30);
+//            record audio
+//            mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+//            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+//            mMediaRecorder.setAudioEncodingBitRate(5121000);
             // TODO: 2016/3/24 mMediaRecorder.setOritation()
             mMediaRecorder.prepare();
             Log.v(TAG, "mMediaProjection=null" + ((mMediaProjection == null)? "true" : "false"));
