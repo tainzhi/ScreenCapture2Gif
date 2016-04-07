@@ -10,7 +10,6 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.muqing.android.screencapture2gif.R;
-import com.muqing.android.screencapture2gif.activity.SettingsActivity;
 import com.muqing.android.screencapture2gif.service.ScreenCaptureService;
 import com.muqing.android.screencapture2gif.util.MyConstants;
 
@@ -23,9 +22,9 @@ public class ScreenRecordNotification {
     private Context mContext;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mBuilder;
-    private static final int sNotifyId = 1;
+    private static final int sNotifyId = 9999;
     private static final String ACTION_STOP_SERVICE = "STOP_SERVICE";
-    private RemoteViews mRemoteView;
+    private RemoteViews mRemoteViews;
 
     public ScreenRecordNotification(Context context) {
         mContext = context;
@@ -34,10 +33,13 @@ public class ScreenRecordNotification {
     public void startNotificate() {
         Log.d(TAG, "startNotification");
 
-        mRemoteView = new RemoteViews(mContext.getPackageName(), R.layout.notification);
-        mRemoteView.setImageViewResource(R.id.notication_image, R.drawable.ic_launcher);
-        mRemoteView.setTextViewText(R.id.notifcation_title, "ScreenCapture2Gif");
-        mRemoteView.setTextViewText(R.id.notification_content, "Recorded 10:00:00");
+        mRemoteViews = new RemoteViews(mContext.getPackageName(), R.layout.notification);
+        mRemoteViews.setImageViewResource(R.id.notication_image, R.drawable.ic_launcher);
+        mRemoteViews.setTextViewText(R.id.notifcation_title,
+                mContext.getString(R.string.notification_title));
+        mRemoteViews.setTextViewText(R.id.notification_record_time_prefix,
+                mContext.getString(R.string.notification_record_time_prefix));
+        mRemoteViews.setTextViewText(R.id.notification_recorded_time, "00:00");
 
         mNotificationManager = (NotificationManager) mContext.getSystemService(mContext.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(mContext)
@@ -49,8 +51,14 @@ public class ScreenRecordNotification {
         PendingIntent pendingIntent = PendingIntent.getService(mContext, 0, intent, 0);
         mBuilder.setContentIntent(pendingIntent);
         Notification notification = mBuilder.build();
-        notification.contentView = mRemoteView;
+        notification.contentView = mRemoteViews;
         mNotificationManager.notify(sNotifyId, notification);
+    }
+
+    public void updateNotification(String time) {
+        mRemoteViews.setTextViewText(R.id.notification_recorded_time, time);
+        mBuilder.setContent(mRemoteViews);
+        mNotificationManager.notify(sNotifyId, mBuilder.build());
     }
 
 }

@@ -54,6 +54,11 @@ public class ScreenCaptureService extends Service {
     private int mVideoWidth;
     private int mVideoHeight;
 
+    private ScreenRecordNotification mScreenRecordNotification;
+    private long mRecordBeginTime;
+    private long mRecordCurrentTime;
+    private boolean mIsScreenRecording = false;
+
     public static Intent newIntent(Context context, int resultCode, Intent data) {
         Intent intent = new Intent(context, ScreenCaptureService.class);
         intent.putExtra(EXTRA_RESULT_CODE, resultCode);
@@ -71,8 +76,8 @@ public class ScreenCaptureService extends Service {
             switch (msg.what) {
                 case MSG_START_CAPTURE:
                     Log.v(TAG, "handleMessage");
-                    ScreenRecordNotification screenRecordNotification = new ScreenRecordNotification(mContext);
-                    screenRecordNotification.startNotificate();
+                    mScreenRecordNotification = new ScreenRecordNotification(mContext);
+                    mScreenRecordNotification.startNotificate();
                     initScreenRecorder();
                     break;
                 case MSG_STOP_SERVICE:
@@ -186,6 +191,11 @@ public class ScreenCaptureService extends Service {
                     mMediaRecorder.getSurface(), null, null);
 
             mMediaRecorder.start();
+
+            mRecordBeginTime = ((System.currentTimeMillis()) / 1000);
+            mIsScreenRecording = true;
+            UpdateNotificationThread updateNotificationThread = new UpdateNotificationThread("UpdateNotificationThread");
+            updateNotificationThread.start();
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "" + e);
@@ -194,6 +204,7 @@ public class ScreenCaptureService extends Service {
     }
 
     private void stopCapture() {
+        mIsScreenRecording = false;
         mMediaRecorder.stop();
         mMediaRecorder.reset();
         Log.v(TAG, "stop recording");
@@ -256,6 +267,29 @@ public class ScreenCaptureService extends Service {
             int width = Integer.parseInt(videoSize.substring(0, xindex));
             int height = Integer.parseInt(videoSize.substring(xindex + 1, videoSize.length()));
             return new int[]{width, height};
+        }
+    }
+
+    private class UpdateNotificationThread extends Thread {
+        volatile boolean isRunning = true;
+        protected UpdateNotificationThread(String threadName) {
+            this.setName(threadName);
+            isRunning = true;
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            while (mIsScreenRecording && isRunning) {
+                try {
+                    this.sleep(1000);
+                } catch (InterruptedException e) {
+                    // FIXME: 2016/4/7
+                }
+                mRecordCurrentTime = (System.currentTimeMillis()) / 1000;
+                long recordTime = mRecordCurrentTime - mRecordBeginTime;
+                mScreenRecordNotification.updateNotification("" + recordTime);
+            }
         }
     }
 }

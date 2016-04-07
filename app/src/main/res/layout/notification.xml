@@ -22,7 +22,7 @@
         android:textIsSelectable="true" />
 
     <TextView
-        android:id="@+id/notification_content"
+        android:id="@+id/notification_record_time_prefix"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Has Recorded: "
@@ -33,7 +33,7 @@
         android:id="@+id/notification_recorded_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/notification_content"
+        android:layout_toRightOf="@id/notification_record_time_prefix"
         android:layout_below="@id/notifcation_title"
         android:text="10:00:00"
         android:textSize="18sp"/>

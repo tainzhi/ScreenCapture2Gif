@@ -19,11 +19,12 @@ https://github.com/tainzhi/ffmpeg-jni-example
 ##Todo##
 - [+] 绘制圆底start
 - [+] Settings选项: name, resolution 480x270, delay 100
-- [ ] notification
+- [+] 判断当前的屏幕分辨率, 然后缩放
+- [+] 绘制AppIcon(Android图标+GIF)
+- [+] Settings: from Video or from pictures
+- [+] notification
+- [ ] video to gif
 - [ ] Martial Design
-- [ ] 判断当前的屏幕分辨率, 然后缩放
-- [ ] 绘制AppIcon(Android图标+GIF)
-- [ ] Settings: from Video or from pictures
 - [ ] 后台执行任务
 - [ ] gif drawable
 - [ ] 
