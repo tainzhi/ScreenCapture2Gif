@@ -21,9 +21,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.muqing.android.screencapture2gif.MainActivity;
-import com.muqing.android.screencapture2gif.helper.gifhelper.FFmpegCommandBuilder;
 import com.muqing.android.screencapture2gif.helper.gifhelper.FFmpegNativeHelper;
-import com.muqing.android.screencapture2gif.helper.gifhelper.GifMerger;
 import com.muqing.android.screencapture2gif.notification.ScreenRecordNotification;
 import com.muqing.android.screencapture2gif.util.MyConstants;
 import com.muqing.android.screencapture2gif.R;
@@ -217,14 +215,8 @@ public class ScreenCaptureService extends Service {
             mMediaProjection = null;
         }
 
-        videoToGif();
+        convertVideoToGif();
         //mContext.startActivity(new Intent(ScreenCaptureService.this, MainActivity.class));
-    }
-
-    private void videoToGif() {
-
-        GifMerger.generateGifProduct("/storage/sdcard0/Download/video.gif"
-                , "/storage/sdcard0/Download/video.mp4", 0, 20);
     }
 
     private static FFmpegNativeHelper mFFmpegNativeHelper = new FFmpegNativeHelper();
@@ -257,17 +249,31 @@ public class ScreenCaptureService extends Service {
         return videoFrameRate;
     }
 
-    private int[] getVideoSize() {
+    private String getGifFrameRate() {
+        String frameRate = mSharedPreferences.getString(getString(R.string.pref_key_gif_frame_rate),
+                getString(R.string.pref_default_value_gif_frame_rate));
+        return frameRate;
+    }
+    private String getVideoSize() {
         String videoSize = mSharedPreferences.getString(getString(R.string.pref_key_gif_size),
                 getString(R.string.pref_default_value_gif_size));
         if (videoSize.equals("Original")) {
-            return null;
+            return "";
         } else {
-            int xindex = videoSize.charAt('x');
-            int width = Integer.parseInt(videoSize.substring(0, xindex));
-            int height = Integer.parseInt(videoSize.substring(xindex + 1, videoSize.length()));
-            return new int[]{width, height};
+            return videoSize;
         }
+    }
+
+    private String getGifPath() {
+        String parentDirectory = mSharedPreferences.getString(getString(R.string.pref_key_save_directory),
+                getString(R.string.pref_default_value_save_directory));
+        String gifName = mSharedPreferences.getString(getString(R.string.pref_key_gif_name),
+                getString(R.string.pref_default_value_gif_name));
+        return Environment.getExternalStorageDirectory().getAbsolutePath()
+                + File.separator
+                + parentDirectory
+                + File.separator
+                + gifName;
     }
 
     private class UpdateNotificationThread extends Thread {
@@ -291,5 +297,14 @@ public class ScreenCaptureService extends Service {
                 mScreenRecordNotification.updateNotification("" + recordTime);
             }
         }
+    }
+
+    private void convertVideoToGif() {
+        FFmpegNativeHelper fFmpegNativeHelper = new FFmpegNativeHelper();
+        fFmpegNativeHelper.setIntputFile(getVideoPath())
+            .setGifFrameRate(getGifFrameRate())
+            .setGifSize(getVideoSize())
+            .setOutputFile(getGifPath())
+            .build();
     }
 }

@@ -15,6 +15,10 @@ https://github.com/tainzhi/ffmpeg-for-android-shared-library
 
 ### use ffmpeg jni to get gif from video
 https://github.com/tainzhi/ffmpeg-jni-example
+```
+ffmpeg -ss 0 -t 20 -i /storage/sdcard0/Download/video.mp4 -vf scale=iw/2:ih/2 -gifflags -transdiff -r 15 -y /storage/sdcard0/Download/video.gif
+ffmpeg -i /storage/sdcard0/Download/video.mp4 -gifflags -transdiff -r 15 -y /storage/sdcard0/Download/video.gif
+```
 
 ##Todo##
 - [+] 绘制圆底start
@@ -23,11 +27,10 @@ https://github.com/tainzhi/ffmpeg-jni-example
 - [+] 绘制AppIcon(Android图标+GIF)
 - [+] Settings: from Video or from pictures
 - [+] notification
-- [ ] video to gif
+- [+] video to gif
 - [ ] Martial Design
 - [ ] 后台执行任务
 - [ ] gif drawable
-- [ ] 
 
 ## References
 [GifAssistant](https://github.com/dxjia/GifAssistant)
