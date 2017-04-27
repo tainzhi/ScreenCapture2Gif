@@ -9,7 +9,7 @@
 ![demo](./demo.gif)
 
 ## 原理图
-![flow chart](./flow chart.png)
+![flow chart](./flow_chart.png)
 
 - 从初始`MainActivity`可以点击右上角,进入`SettingsActivity`, 设置自定义信息
 - 点击`MainActivity`开始`ScreenCaptureServie`, `MainActivity`隐藏不可见, `ScreenCaptureServide`开始录制屏幕,同时`Notification`显示当前录制状态和提供停止录制控制
